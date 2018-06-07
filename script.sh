@@ -1,6 +1,7 @@
 function curlGetBodyAndCode (){
 
 
+
 # store the whole response with the status at the and
 HTTP_RESPONSE=$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -F file=@$2 -X POST -H 'Accept: text/turtle' $1)
 
@@ -17,17 +18,29 @@ HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 # example using the status
 if [ ! $HTTP_STATUS -eq 200  ]; then
   echo -e "Endpoint: $1\nError HTTP Code: $HTTP_STATUS"
-  exit 1
 
 else
 
-newfilename="$filename"_name.ttl
+newfilename="$filename"_modified.ttl
 
   echo -e "Endpoint: $1\nCreated new file: $newfilename"
   echo "$HTTP_BODY">"$newfilename"
 goodresponse=true
 fi
 }
+
+
+if [ "$1" == "h" ]
+then
+  echo Prefix resolver v. 1.0
+  echo "########################"
+  echo Input
+  echo ./script.sh example.ttl
+  echo "########################"
+  echo Output
+  echo Saved Turtle file with name example_modified.ttl
+  exit -1
+fi
 
 filename=`basename $1 .ttl`
 
@@ -49,7 +62,7 @@ for i in "${result[@]}"
 do
 
 if [ "$goodresponse" = true ] ; then
-    break;
+    exit 1;
 fi
 
    curlGetBodyAndCode $i $tmpfile
@@ -57,7 +70,6 @@ done
 
 
 rm "$tmpfile"
-
 
 
 
