@@ -17,7 +17,6 @@ HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 # example using the status
 if [ ! $HTTP_STATUS -eq 200  ]; then
   echo -e "Endpoint: $1\nError HTTP Code: $HTTP_STATUS"
-  exit 1
 
 else
 
@@ -49,7 +48,7 @@ for i in "${result[@]}"
 do
 
 if [ "$goodresponse" = true ] ; then
-    break;
+    exit 1;
 fi
 
    curlGetBodyAndCode $i $tmpfile
@@ -57,7 +56,6 @@ done
 
 
 rm "$tmpfile"
-
 
 
 
